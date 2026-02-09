@@ -65,7 +65,7 @@ export default function MergePDF() {
         style={dropZone}
       >
         <label style={button(loading)}>
-          {loading ? "Merging..." : "Choose PDF Files"}
+          {loading ? <Spinner /> : "Choose PDF"}
           <input
             type="file"
             accept="application/pdf"
@@ -141,3 +141,19 @@ const downloadBtn = {
   textDecoration: "none",
   fontWeight: "bold",
 };
+
+function Spinner() {
+  return (
+    <div style={spinner}></div>
+  );
+}
+
+const spinner = {
+  width: "30px",
+  height: "30px",
+  border: "4px solid #ddd",
+  borderTop: "4px solid #0070f3",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite",
+};
+

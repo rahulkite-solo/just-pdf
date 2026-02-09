@@ -52,7 +52,7 @@ export default function PNGtoPDF() {
 
       <div onDrop={handleDrop} onDragOver={(e) => e.preventDefault()} style={dropZone}>
         <label style={button(loading)}>
-          {loading ? "Converting..." : "Choose PNG Image"}
+          {loading ? <Spinner /> : "Choose PNG Image"}
           <input hidden type="file" accept="image/png" onChange={handleFile} />
         </label>
 
@@ -78,3 +78,18 @@ const dropZone = { border: "2px dashed #aaa", borderRadius: "10px", padding: "40
 const button = (loading: boolean) => ({ display: "inline-block", backgroundColor: loading ? "#999" : "#0070f3", color: "white", padding: "14px 24px", borderRadius: "6px", cursor: loading ? "not-allowed" : "pointer", fontSize: "18px", fontWeight: "bold" });
 const errorStyle = { color: "red", marginTop: "20px" };
 const downloadBtn = { display: "inline-block", marginTop: "20px", backgroundColor: "#28a745", color: "white", padding: "12px 20px", borderRadius: "6px", textDecoration: "none", fontWeight: "bold" };
+
+function Spinner() {
+  return (
+    <div style={spinner}></div>
+  );
+}
+
+const spinner = {
+  width: "30px",
+  height: "30px",
+  border: "4px solid #ddd",
+  borderTop: "4px solid #0070f3",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite",
+};

@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { imageToPdf } from "@/lib/pdfUtils";
 
+if (typeof window !== "undefined") {
+  const style = document.createElement("style");
+  style.innerHTML = `
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 export default function JPGtoPDF() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -64,7 +75,7 @@ export default function JPGtoPDF() {
         style={dropZone}
       >
         <label style={button(loading)}>
-          {loading ? "Converting..." : "Choose JPG Image"}
+          {loading ? <Spinner /> : "Choose JPG Image"}
           <input
             type="file"
             accept="image/jpeg"
@@ -79,6 +90,8 @@ export default function JPGtoPDF() {
         </p>
       </div>
 
+      <ProgressBar loading={loading} />
+
       {error && <p style={errorStyle}>{error}</p>}
 
       {downloadUrl && (
@@ -88,6 +101,7 @@ export default function JPGtoPDF() {
       )}
     </main>
   );
+  
 }
 
 const container = {
@@ -139,3 +153,45 @@ const downloadBtn = {
   textDecoration: "none",
   fontWeight: "bold",
 };
+
+function Spinner() {
+  return <div style={spinner}></div>;
+}
+
+const spinner = {
+  width: "30px",
+  height: "30px",
+  border: "4px solid #ddd",
+  borderTop: "4px solid #0070f3",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite",
+};
+
+function ProgressBar({ loading }: { loading: boolean }) {
+  return (
+    <div style={progressContainer}>
+      <div
+        style={{
+          ...progressFill,
+          width: loading ? "80%" : "0%",
+        }}
+      />
+    </div>
+  );
+}
+
+const progressContainer = {
+  width: "100%",
+  height: "8px",
+  background: "#eee",
+  borderRadius: "5px",
+  marginTop: "20px",
+  overflow: "hidden",
+};
+
+const progressFill = {
+  height: "100%",
+  background: "#0070f3",
+  transition: "width 0.5s ease",
+};
+
