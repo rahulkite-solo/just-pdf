@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { imageToPdf } from "../../lib/pdfUtils.ts";
+import { imageToPdf } from "../../lib/pdfUtils";
 
 export default function JPGtoPDF() {
   const [loading, setLoading] = useState(false);
