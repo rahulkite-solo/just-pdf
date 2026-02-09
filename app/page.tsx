@@ -25,6 +25,8 @@ const container = {
 const title = {
   fontSize: "36px",
   marginBottom: "40px",
+  color: "#111", 
+  fontWeight: "bold",
 };
 
 const grid = {

@@ -74,7 +74,7 @@ export default function JPGtoPDF() {
           />
         </label>
 
-        <p style={{ marginTop: "12px", color: "#666" }}>
+        <p style={{ marginTop: "12px", color: "#050505" }}>
           or drag & drop image here
         </p>
       </div>
