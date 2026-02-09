@@ -1,27 +1,88 @@
 "use client";
 
 import { useState } from "react";
-import { imageToPdf } from "../../lib/pdfUtils";
+import { imageToPdf } from "../../lib/pdfUtils.ts";
 
 export default function JPGtoPDF() {
-  const [url, setUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
-  async function handleFile(e: any) {
-    const file = e.target.files[0];
-    if (!file) return;
+  async function convert(file: File) {
+    try {
+      setLoading(true);
+      setError("");
+      setDownloadUrl(null);
 
-    const blob = await imageToPdf(file);
-    setUrl(URL.createObjectURL(blob));
+      // 🔒 SECURITY — size limit
+      if (file.size > 5 * 1024 * 1024) {
+        setError("File too large (max 5MB)");
+        setLoading(false);
+        return;
+      }
+
+      // 🔒 SECURITY — image only
+      if (!file.type.startsWith("image/")) {
+        setError("Only image files allowed");
+        setLoading(false);
+        return;
+      }
+
+      const blob = await imageToPdf(file);
+      setDownloadUrl(URL.createObjectURL(blob));
+    } catch (err) {
+      console.error(err);
+      setError("Conversion failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    if (loading) return;
+
+    const file = e.target.files?.[0];
+    if (file) convert(file);
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+
+    if (loading) return;
+
+    const file = e.dataTransfer.files[0];
+    if (file) convert(file);
   }
 
   return (
-    <main style={page}>
-      <h1>JPG → PDF</h1>
+    <main style={container}>
+      <h1 style={title}>JPG → PDF Converter</h1>
 
-      <input type="file" accept="image/jpeg" onChange={handleFile} />
+      <div
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
+        style={dropZone}
+      >
+        <label style={button(loading)}>
+          {loading ? "Converting..." : "Choose JPG Image"}
+          <input
+            type="file"
+            accept="image/jpeg"
+            hidden
+            disabled={loading}
+            onChange={handleFile}
+          />
+        </label>
 
-      {url && (
-        <a href={url} download="file.pdf">
+        <p style={{ marginTop: "12px", color: "#666" }}>
+          or drag & drop image here
+        </p>
+      </div>
+
+      {error && <p style={errorStyle}>{error}</p>}
+
+      {downloadUrl && (
+        <a href={downloadUrl} download="converted.pdf" style={downloadBtn}>
           Download PDF
         </a>
       )}
@@ -29,7 +90,50 @@ export default function JPGtoPDF() {
   );
 }
 
-const page = {
-  padding: "60px",
+const container = {
+  padding: "60px 20px",
   textAlign: "center" as const,
+  backgroundColor: "#f5f5f5",
+  minHeight: "80vh",
+};
+
+const title = {
+  fontSize: "32px",
+  marginBottom: "30px",
+};
+
+const dropZone = {
+  border: "2px dashed #aaa",
+  borderRadius: "10px",
+  padding: "40px",
+  backgroundColor: "white",
+  maxWidth: "400px",
+  margin: "auto",
+};
+
+const button = (loading: boolean) => ({
+  display: "inline-block",
+  backgroundColor: loading ? "#999" : "#0070f3",
+  color: "white",
+  padding: "14px 24px",
+  borderRadius: "6px",
+  cursor: loading ? "not-allowed" : "pointer",
+  fontSize: "18px",
+  fontWeight: "bold",
+});
+
+const errorStyle = {
+  color: "red",
+  marginTop: "20px",
+};
+
+const downloadBtn = {
+  display: "inline-block",
+  marginTop: "20px",
+  backgroundColor: "#28a745",
+  color: "white",
+  padding: "12px 20px",
+  borderRadius: "6px",
+  textDecoration: "none",
+  fontWeight: "bold",
 };
