@@ -74,7 +74,7 @@ export default function JPGtoPDF() {
           />
         </label>
 
-        <p style={{ marginTop: "12px", color: "#050505" }}>
+        <p style={{ marginTop: "12px", color: "#7b7a7a" }}>
           or drag & drop image here
         </p>
       </div>
@@ -100,6 +100,8 @@ const container = {
 const title = {
   fontSize: "32px",
   marginBottom: "30px",
+  color: "#111",
+  fontWeight: "bold",
 };
 
 const dropZone = {
